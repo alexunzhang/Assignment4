@@ -41,11 +41,23 @@ sd(cc$Amount)
 
 ```{r echo=TRUE}
 
-## no missing value from the data. If there are missing value, then we need to understand the likely cause of missing values whether it's a random or not. If it's random, then the data while lacking statistical power may still be unbiased. If it's not random, then the data may be biased. Increasing the sample size will help address the problem. Also, we can use missing value deletion, mean or regression imputation to make up the missing values.
+## no missing value from the data. If there are missing value, 
+## then we need to understand the likely cause of missing values 
+##whether it's a random or not. If it's random, then the data 
+##while lacking statistical power may still be unbiased. 
+##If it's not random, then the data may be biased. 
+##Increasing the sample size will help address the problem. 
+##Also, we can use missing value deletion, mean or regression 
+##imputation to make up the missing values.
 
 sum(is.na(cc))
 
-## we will scale our data using the scale() function. We will apply this to the amount component of our creditcard_data amount. Scaling is also known as feature standardization. With the help of scaling, the data is structured according to a specified range. Therefore, there are no extreme values in our dataset that might interfere with the functioning of our model. 
+## we will scale our data using the scale() function. 
+##We will apply this to the amount component of our creditcard_data amount. 
+##Scaling is also known as feature standardization. 
+##With the help of scaling, the data is structured according to a specified range. 
+##Therefore, there are no extreme values in our dataset that might 
+##interfere with the functioning of our model. 
 
 cc$Amount = scale(cc$Amount)
 newcc = cc[,-c(1)]
@@ -57,7 +69,10 @@ head(newcc)
 
 ```{r echo=TRUE}
 
-## After we have standardized our entire dataset, we will split our dataset into training set as well as test set with a split ratio of 0.80. This means that 80% of our data will be attributed to the train_data whereas 20% will be attributed to the test data.
+## After we have standardized our entire dataset, we will split our dataset 
+##into training set as well as test set with a split ratio of 0.80. 
+##This means that 80% of our data will be attributed to the train_data whereas 
+##20% will be attributed to the test data.
 
 library(caTools)
 set.seed(123)
@@ -65,7 +80,9 @@ ccsample = sample.split(newcc$Class, SplitRatio = 0.8)
 train_data = subset(newcc, ccsample == TRUE)
 test_data = subset(newcc, ccsample == FALSE)
 
-## We will begin with logistic regression. A logistic regression is used for modeling the outcome probability of a class such as pass/fail, positive/negative and in our case – fraud/not fraud. 
+## We will begin with logistic regression. A logistic regression is used for 
+##modeling the outcome probability of a class such as pass/fail, 
+##positive/negative and in our case – fraud/not fraud. 
 
 cclog = glm(Class~.,train_data, family=binomial())
 summary(cclog)
@@ -76,14 +93,21 @@ summary(cclog)
 
 ```{r echo=TRUE}
 
-## In order to assess the performance of our model, we will delineate the ROC curve. ROC is also known as Receiver Optimistic Characteristics. For this, we will first import the ROC package and then plot our ROC curve to analyze its performance.
+## In order to assess the performance of our model, we will delineate the ROC curve. 
+#3ROC is also known as Receiver Optimistic Characteristics. For this, we will first 
+##import the ROC package and then plot our ROC curve to analyze its performance.
 
 library(pROC)
 cc.predict <- predict(cclog, test_data, probability = TRUE)
 
 ccpredchart <- roc(test_data$Class, cc.predict, plot = TRUE, col = "blue")
 
-# Both Sensitivity and Specificity are high in this model. Sensitivity, the True Positive rate meaning the proportion of Fraudulent transactions that were predicted fraudent out of total Fraudent transactions, is between 90% to 100%. Specificity, the True Negative rate meaning the proportion of non-fraudent transactions that were predicted non-fraudelnt out of total non-fraudelent trasactions, is 100%. This indicates the model has strong prediction power.
+# Both Sensitivity and Specificity are high in this model. Sensitivity, 
+##the True Positive rate meaning the proportion of Fraudulent transactions that 
+##were predicted fraudent out of total Fraudent transactions, is between 90% to 100%. 
+##Specificity, the True Negative rate meaning the proportion of non-fraudent 
+##transactions that were predicted non-fraudelnt out of total non-fraudelent trasactions, 
+##is 100%. This indicates the model has strong prediction power.
 
 ```
 
